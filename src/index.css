@@ -1,0 +1,396 @@
+@import 'tailwindcss';
+
+/* ==========================================================================
+   Duroyo — design tokens
+   Palette derived from the supplied brass logo plate plus Gilgit landscape.
+   ========================================================================== */
+@theme {
+  --color-ink: #16130f;
+  --color-ink-2: #221d17;
+  --color-ink-3: #2e2820;
+  --color-bone: #f7f3ea;
+  --color-bone-2: #efe8db;
+  --color-bone-3: #e2d9c8;
+  --color-brass: #978564;
+  --color-brass-2: #b79e72;
+  --color-brass-3: #6e5c3e;
+  --color-pine: #2b3a31;
+  --color-pine-2: #3d5045;
+  --color-clay: #8a6a52;
+
+  --font-display: 'Cormorant Garamond', 'Iowan Old Style', Georgia, serif;
+  --font-sans: 'Jost', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif;
+
+  --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-in-out-quart: cubic-bezier(0.76, 0, 0.24, 1);
+}
+
+/* ==========================================================================
+   Base
+   ========================================================================== */
+@layer base {
+  * {
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  html {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    scroll-behavior: auto;
+  }
+
+  /* `clip`, not `hidden`: it suppresses horizontal scroll without turning the
+     element into a scroll container, so sticky children and the pinned
+     horizontal track keep working. It has to be on the root as well as body —
+     body cannot clip a position:fixed child (the header), and a fixed element
+     that overflows widens the viewport, which makes mobile Chrome zoom the
+     whole page out. */
+  html {
+    overflow-x: clip;
+  }
+
+  body {
+    background-color: var(--color-ink);
+    color: var(--color-bone);
+    font-family: var(--font-sans);
+    font-weight: 300;
+    overflow-x: clip;
+  }
+
+  /* Small text links set inline in prose end up ~10px tall, well below a usable
+     touch target. Grow the box with padding and cancel it with an equal
+     negative margin, so the hit area reaches ~40px while the line layout is
+     completely unchanged. Padding rather than an ::after overlay because
+     .link-brass already owns ::after for its underline, and two rules on the
+     same pseudo-element merge instead of stacking. */
+  .tap-target {
+    padding-block: 0.9rem;
+    margin-block: -0.9rem;
+    padding-inline: 0.3rem;
+    margin-inline: -0.3rem;
+  }
+
+  ::selection {
+    background: var(--color-brass);
+    color: var(--color-ink);
+  }
+
+  h1,
+  h2,
+  h3,
+  h4 {
+    font-family: var(--font-display);
+    font-weight: 300;
+    letter-spacing: -0.015em;
+    line-height: 0.98;
+    text-wrap: balance;
+  }
+
+  p {
+    text-wrap: pretty;
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--color-brass-2);
+    outline-offset: 3px;
+    border-radius: 1px;
+  }
+
+  /* Firefox scrollbar */
+  html {
+    scrollbar-color: var(--color-brass-3) var(--color-ink);
+    scrollbar-width: thin;
+  }
+}
+
+/* ==========================================================================
+   Utilities
+   ========================================================================== */
+@utility label {
+  font-family: var(--font-sans);
+  font-size: 0.6875rem;
+  font-weight: 400;
+  letter-spacing: 0.34em;
+  text-transform: uppercase;
+  line-height: 1;
+}
+
+@utility label-sm {
+  font-family: var(--font-sans);
+  font-size: 0.625rem;
+  font-weight: 400;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  line-height: 1;
+}
+
+@utility measure {
+  max-width: 62ch;
+}
+
+@utility measure-tight {
+  max-width: 46ch;
+}
+
+@utility edge {
+  padding-inline: 1.25rem;
+  @media (min-width: 768px) {
+    padding-inline: 2.5rem;
+  }
+  @media (min-width: 1280px) {
+    padding-inline: 4.5rem;
+  }
+}
+
+/* Brass hairline that fades out — used as a section rule */
+@utility rule {
+  display: block;
+  height: 1px;
+  width: 100%;
+  background: linear-gradient(
+    to right,
+    color-mix(in srgb, var(--color-brass) 70%, transparent),
+    color-mix(in srgb, var(--color-brass) 6%, transparent)
+  );
+}
+
+@utility rule-light {
+  display: block;
+  height: 1px;
+  width: 100%;
+  background: linear-gradient(
+    to right,
+    color-mix(in srgb, var(--color-bone) 34%, transparent),
+    transparent
+  );
+}
+
+@utility display-1 {
+  font-family: var(--font-display);
+  font-size: clamp(3.1rem, 11.5vw, 11rem);
+  font-weight: 300;
+  line-height: 0.86;
+  letter-spacing: -0.03em;
+}
+
+@utility display-2 {
+  font-family: var(--font-display);
+  font-size: clamp(2.4rem, 6.6vw, 6rem);
+  font-weight: 300;
+  line-height: 0.94;
+  letter-spacing: -0.025em;
+}
+
+@utility display-3 {
+  font-family: var(--font-display);
+  font-size: clamp(1.9rem, 4vw, 3.4rem);
+  font-weight: 300;
+  line-height: 1.02;
+  letter-spacing: -0.02em;
+}
+
+@utility body-lg {
+  font-size: clamp(1rem, 1.35vw, 1.1875rem);
+  line-height: 1.65;
+  font-weight: 300;
+}
+
+/* Grain overlay for texture over large flat areas */
+@utility grain {
+  position: relative;
+  &::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    opacity: 0.22;
+    mix-blend-mode: overlay;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23n)' opacity='0.5'/%3E%3C/svg%3E");
+  }
+}
+
+/* ==========================================================================
+   Animation primitives
+   ========================================================================== */
+@layer components {
+  /* Masked line reveal — each line sits in an overflow-hidden box */
+  .line-mask {
+    display: block;
+    overflow: hidden;
+    padding-bottom: 0.06em;
+    margin-bottom: -0.06em;
+  }
+
+  .line-mask > span {
+    display: block;
+    will-change: transform;
+  }
+
+  /* Editorial link with a sliding brass underline */
+  .link-brass {
+    position: relative;
+    display: inline-block;
+    color: inherit;
+    text-decoration: none;
+  }
+
+  .link-brass::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    bottom: -0.1em;
+    height: 1px;
+    width: 100%;
+    background: currentColor;
+    opacity: 0.4;
+    transform: scaleX(0);
+    transform-origin: right;
+    transition: transform 0.55s var(--ease-out-expo);
+  }
+
+  .link-brass:hover::after,
+  .link-brass:focus-visible::after {
+    transform: scaleX(1);
+    transform-origin: left;
+  }
+
+  /* Wrapping outline button */
+  .btn-outline {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.75rem;
+    padding: 1.05rem 2rem;
+    border: 1px solid color-mix(in srgb, currentColor 34%, transparent);
+    font-family: var(--font-sans);
+    font-size: 0.6875rem;
+    font-weight: 400;
+    letter-spacing: 0.28em;
+    text-transform: uppercase;
+    line-height: 1;
+    overflow: hidden;
+    isolation: isolate;
+    transition: color 0.5s var(--ease-out-expo), border-color 0.5s var(--ease-out-expo);
+  }
+
+  .btn-outline::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    background: currentColor;
+    transform: scaleY(0);
+    transform-origin: bottom;
+    transition: transform 0.6s var(--ease-in-out-quart);
+  }
+
+  .btn-outline:hover,
+  .btn-outline:focus-visible {
+    border-color: currentColor;
+  }
+
+  .btn-outline:hover::before,
+  .btn-outline:focus-visible::before {
+    transform: scaleY(1);
+  }
+
+  .btn-solid {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.75rem;
+    padding: 1.05rem 2.1rem;
+    background: var(--color-brass);
+    color: var(--color-ink);
+    font-family: var(--font-sans);
+    font-size: 0.6875rem;
+    font-weight: 500;
+    letter-spacing: 0.28em;
+    text-transform: uppercase;
+    line-height: 1;
+    overflow: hidden;
+    isolation: isolate;
+    transition: background-color 0.5s var(--ease-out-expo), color 0.5s var(--ease-out-expo);
+  }
+
+  .btn-solid::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    background: var(--color-bone);
+    transform: translateY(101%);
+    transition: transform 0.6s var(--ease-in-out-quart);
+  }
+
+  .btn-solid:hover,
+  .btn-solid:focus-visible {
+    background: var(--color-brass-2);
+  }
+
+  .btn-solid:hover::before,
+  .btn-solid:focus-visible::before {
+    transform: translateY(0);
+  }
+
+  /* Press feedback. Kept on the element itself so it composes with the
+     magnetic wrapper, which drives its own transform on a parent node. */
+  .btn-outline:active,
+  .btn-solid:active {
+    transform: scale(0.982);
+  }
+
+  /* Focus-visible is handled globally above; this only covers the buttons so
+     the brass ring stays consistent between the two variants. */
+  .btn-solid:focus-visible,
+  .btn-outline:focus-visible {
+    outline: 2px solid var(--color-brass-2);
+    outline-offset: 3px;
+  }
+
+  /* Image container that reveals with a clip-path wipe */
+  .clip-reveal {
+    clip-path: inset(0% 0% 100% 0%);
+    will-change: clip-path;
+  }
+
+  .img-cover {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+
+  /* Corner tick ornament, echoes the brass plate */
+  .tick-corner {
+    position: absolute;
+    width: 0.75rem;
+    height: 0.75rem;
+    border-color: color-mix(in srgb, var(--color-brass) 60%, transparent);
+    border-style: solid;
+    border-width: 0;
+  }
+}
+
+/* ==========================================================================
+   Reduced motion — collapse all transforms to simple fades
+   ========================================================================== */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+
+  .line-mask > span,
+  .clip-reveal {
+    transform: none !important;
+    clip-path: none !important;
+    opacity: 1 !important;
+  }
+}
