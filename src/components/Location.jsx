@@ -1,6 +1,6 @@
 import { Phone, MapPin, ArrowUpRight } from 'lucide-react'
 import { hotel } from '../data/site'
-import { images, allImages, brand } from '../data/images'
+import { images, brand } from '../data/images'
 import {
   MaskedLines,
   Reveal,
@@ -187,16 +187,6 @@ export default function Location() {
             </nav>
           )}
 
-          <div className="md:col-span-4 md:col-start-9">
-            <h2 className="label-sm text-bone/40">Image credits</h2>
-            <ul className="mt-5 grid gap-2">
-              {allImages.map((credit) => (
-                <li key={credit} className="text-xs font-light leading-relaxed text-bone/35">
-                  {credit}
-                </li>
-              ))}
-            </ul>
-          </div>
         </div>
 
         <div className="mt-12 flex flex-wrap items-center justify-between gap-4 border-t border-bone/12 pt-8">
